@@ -1,43 +1,45 @@
--- place this in StarterPlayerScripts or run via your local UI system
+-- ✅ Client-side Team Highlight Script
+-- Highlights all teammates when holding a tool named "Football"
+
 local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 local highlightFolder = Instance.new("Folder")
 highlightFolder.Name = "TeamHighlights"
-highlightFolder.Parent = player:WaitForChild("PlayerGui") -- purely client-side
+highlightFolder.Parent = player:WaitForChild("PlayerGui") -- purely client-side visuals
 
-if not game or not game.GetService then
-    game = cloneref(game:GetService("CoreGui").RobloxGui.Parent)
-end
-
+-- Utility: Clear existing highlights
 local function clearHighlights()
 	for _, h in ipairs(highlightFolder:GetChildren()) do
 		h:Destroy()
 	end
 end
 
+-- Utility: Create highlight around a player's character
 local function createHighlight(target)
+	if target:FindFirstChildOfClass("Highlight") then return end -- prevent duplicates
+
 	local h = Instance.new("Highlight")
 	h.Name = "Highlight_" .. target.Name
 	h.Adornee = target
-	h.FillColor = Color3.fromRGB(0, 255, 0) -- teammate color
+	h.FillColor = Color3.fromRGB(0, 255, 0) -- teammate color (green)
 	h.OutlineColor = Color3.fromRGB(0, 0, 0)
 	h.FillTransparency = 0.5
+	h.OutlineTransparency = 0
 	h.Parent = highlightFolder
 end
 
--- check for teammate characters and highlight them
+-- Refresh highlights for current teammates
 local function refreshHighlights()
 	clearHighlights()
-	for _, p in ipairs(game.Players:GetPlayers()) do
+	for _, p in ipairs(Players:GetPlayers()) do
 		if p ~= player and p.Team == player.Team and p.Character then
 			createHighlight(p.Character)
 		end
 	end
 end
 
--- listen for tool equip/unequip
+-- Handle character added / tool equip-unequip logic
 local function onCharacterAdded(char)
-	local backpack = player:WaitForChild("Backpack")
-
 	local function toolCheck()
 		local equipped = char:FindFirstChildOfClass("Tool")
 		if equipped and equipped.Name == "Football" then
@@ -47,14 +49,14 @@ local function onCharacterAdded(char)
 		end
 	end
 
-	-- trigger when tools are equipped or unequipped
 	char.ChildAdded:Connect(toolCheck)
 	char.ChildRemoved:Connect(toolCheck)
 
-	-- also run initial check
-	toolCheck()
+	-- Run once on spawn
+	task.delay(1, toolCheck)
 end
 
+-- Setup character listener
 player.CharacterAdded:Connect(onCharacterAdded)
 if player.Character then
 	onCharacterAdded(player.Character)
