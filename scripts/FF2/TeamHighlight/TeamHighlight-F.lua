@@ -1,29 +1,23 @@
--- Client-side cleanup script
+-- ❌ Disable Team Highlight System (Client-Side Cleanup)
+
 local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-if not game or not game.GetService then
-    game = cloneref(game:GetService("CoreGui").RobloxGui.Parent)
-end
-
--- remove highlight folder if it exists
+-- Try to find and remove the highlight folder
 local gui = player:FindFirstChild("PlayerGui")
 if gui then
-	local folder = gui:FindFirstChild("TeamHighlights")
-	if folder then
-		folder:Destroy()
-		print("🧹 Removed highlight folder.")
-	end
+    local folder = gui:FindFirstChild("TeamHighlights")
+    if folder then
+        folder:Destroy()
+        print("🗑️ Removed TeamHighlights folder.")
+    end
 end
 
--- disconnect any leftover connections if they were stored globally
-if getgenv().HighlightConnections then
-	for _, conn in ipairs(getgenv().HighlightConnections) do
-		if typeof(conn) == "RBXScriptConnection" then
-			conn:Disconnect()
-		end
-	end
-	getgenv().HighlightConnections = nil
-	print("🔌 Disconnected highlight connections.")
+-- Optional: Remove any lingering highlight instances in workspace (just in case)
+for _, obj in ipairs(workspace:GetDescendants()) do
+    if obj:IsA("Highlight") and obj.Name:find("Highlight_") then
+        obj:Destroy()
+    end
 end
 
-print("✅ Highlight system fully removed (client-side).")
+print("❌ Team highlight system disabled (client-side).")
