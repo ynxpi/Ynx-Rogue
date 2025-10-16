@@ -1,4 +1,4 @@
-local omni = loadstring(game:HttpGet("https://raw.githubusercontent.com/TweedLeak-LeakScripts/FriseX/main/UI-Library"))()
+local omni = loadstring(game:HttpGet("https://raw.githubusercontent.com/ynxpi/Ynx-Rogue/main/uilib.lua"))()
 local Player = game.Players.LocalPlayer
 local UI = omni.new({
     Name = "❤️ Ynx Rogue ❤️",
