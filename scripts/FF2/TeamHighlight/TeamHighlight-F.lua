@@ -1,5 +1,9 @@
 -- Client-side cleanup script
-local player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
+
+if not game or not game.GetService then
+    game = cloneref(game:GetService("CoreGui").RobloxGui.Parent)
+end
 
 -- remove highlight folder if it exists
 local gui = player:FindFirstChild("PlayerGui")
