@@ -1,8 +1,12 @@
 -- place this in StarterPlayerScripts or run via your local UI system
-local player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
 local highlightFolder = Instance.new("Folder")
 highlightFolder.Name = "TeamHighlights"
 highlightFolder.Parent = player:WaitForChild("PlayerGui") -- purely client-side
+
+if not game or not game.GetService then
+    game = cloneref(game:GetService("CoreGui").RobloxGui.Parent)
+end
 
 local function clearHighlights()
 	for _, h in ipairs(highlightFolder:GetChildren()) do
