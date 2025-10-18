@@ -1,5 +1,3 @@
--- ✅ EnemyHighlight.lua (Football-aware version)
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -8,7 +6,7 @@ local enemyFolder = Instance.new("Folder")
 enemyFolder.Name = "EnemyHighlights"
 enemyFolder.Parent = player:WaitForChild("PlayerGui")
 
-local HIGHLIGHT_COLOR = Color3.fromRGB(255, 0, 0) -- 🔴 highlight for enemies
+local HIGHLIGHT_COLOR = Color3.fromRGB(255, 0, 0) -- 🔴 red highlight for enemies
 local OUTLINE_COLOR = Color3.fromRGB(0, 0, 0)
 local FILL_TRANSPARENCY = 0.5
 
@@ -31,20 +29,19 @@ local function createHighlight(target)
 	h.Parent = enemyFolder
 end
 
--- 🔍 Check if a player currently has the football
-local function hasFootball(target)
-	if not target.Character then return false end
-	-- Adjust path based on your game's hierarchy
-	local football = target.Character:FindFirstChild("Football")
-	return football ~= nil
+-- 🔍 Check if the local player has the football
+local function hasFootball()
+	if not player.Character then return false end
+	return player.Character:FindFirstChild("Football") ~= nil
 end
 
 -- 🔍 Refresh all highlights
 local function refreshHighlights()
 	clearHighlights()
+	if not hasFootball() then return end -- Only highlight if we have the ball
 	for _, p in ipairs(Players:GetPlayers()) do
 		if p ~= player and p.Character and p.Team and player.Team then
-			if p.Team ~= player.Team and hasFootball(p) then
+			if p.Team ~= player.Team then
 				createHighlight(p)
 			end
 		end
@@ -62,4 +59,4 @@ Players.PlayerRemoving:Connect(refreshHighlights)
 player:GetPropertyChangedSignal("Team"):Connect(refreshHighlights)
 RunService.Heartbeat:Connect(refreshHighlights)
 
-print("✅ EnemyHighlight system loaded (client-side, football-aware)")
+print("✅ EnemyHighlight system loaded (client-side only, football-aware)")
