@@ -1,7 +1,3 @@
--- ✅ AllHighlight.lua
--- Highlights BOTH teammates (green) and enemies (red)
--- Client-side only, no replication, safe visual feature
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -25,6 +21,12 @@ local function clearHighlights()
 	end
 end
 
+-- 🔍 Check if the local player has the football
+local function hasFootball()
+	if not player.Character then return false end
+	return player.Character:FindFirstChild("Football") ~= nil
+end
+
 -- 🧱 Create highlight for a player
 local function createHighlightForPlayer(target)
 	if not target.Character then return end
@@ -46,6 +48,7 @@ end
 -- 🔍 Refresh highlights for all players
 local function refreshHighlights()
 	clearHighlights()
+	if not hasFootball() then return end -- Only highlight if we have the ball
 	for _, p in ipairs(Players:GetPlayers()) do
 		if p ~= player and p.Character then
 			createHighlightForPlayer(p)
@@ -63,11 +66,9 @@ end)
 Players.PlayerRemoving:Connect(refreshHighlights)
 player:GetPropertyChangedSignal("Team"):Connect(refreshHighlights)
 
--- Refresh every few seconds (failsafe)
-RunService.Heartbeat:Connect(function()
-	refreshHighlights()
-end)
+-- Refresh every frame
+RunService.Heartbeat:Connect(refreshHighlights)
 
 -- Initial load
 refreshHighlights()
-print("✅ AllHighlight system loaded: Teammates (green), Enemies (red)")
+print("✅ AllHighlight system loaded (football-aware): Teammates (green), Enemies (red)")
